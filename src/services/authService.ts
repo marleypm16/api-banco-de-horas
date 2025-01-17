@@ -10,7 +10,7 @@ export class AuthService {
         if (!user) {
             throw new Error('User not found')
         }
-        const token = sign(email, process.env.JWT_SECRET as string,
+        const token = sign({email}, process.env.JWT_SECRET as string,
             {
                 expiresIn:8699
             }
