@@ -7,20 +7,24 @@ export class Authorization{
           const { authorization } = req.headers;
     
           if (!authorization) {
-            return res.status(401).json({ error: "Token is required" });
+             res.status(401).json({ error: "Token is required" });
+          }
+
+          else{
+            const token = authorization.split(" ")[1]; 
+            // Remove "Bearer " prefix if exists
+            const decoded = verify(token, process.env.JWT_SECRET as string);
+            
+            // Anexa os dados do usuário decodificado no objeto `req` para acesso posterior
+            res.status(200).json({ message: "You are authorized", decoded });
+
+            next();
           }
     
-          const token = authorization.split(" ")[1]; // Remove "Bearer " prefix if exists
-    
-          const decoded = verify(token, process.env.JWT_SECRET as string);
-    
-          // Anexa os dados do usuário decodificado no objeto `req` para acesso posterior
-          req.body = decoded;
-    
-          next();
+        
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (errors) {
-          return res.status(401).json({ error: "Invalid or expired token" });
+           res.status(401).json({ error: "Invalid or expired token" });
         }
       }
 }
