@@ -1,5 +1,6 @@
 import { User } from "@prisma/client";
 import db from "../../db/db";
+import bcrypt from "bcrypt";
 
 export class UserService{
     async getUsers(){
@@ -7,8 +8,13 @@ export class UserService{
     }
 
     async newUser(user:User){
+
+        const senhaCriptografada = await bcrypt.hash(user.password,10)
         return await db.user.create({
-            data: user
+            data: {
+                ...user,
+                password : senhaCriptografada
+            }
     })
 }
 }
